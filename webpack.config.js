@@ -52,9 +52,36 @@ function developmentConfig() {
         errors: true,
         warnings: true,
       },
-    }, plugins: [
+    },
+    module: {
+      rules: [
+        {
+          test: /\.js$/,
+          enforce: 'pre',
+          loader: 'eslint-loader',
+          options: {
+            emitWarning: true,
+          },
+        },
+      ],
+    },
+    plugins: [
       new webpack.HotModuleReplacementPlugin(),
       new webpack.NamedModulesPlugin(),
+      new webpack.LoaderOptionsPlugin({
+        options: {
+          eslint: {
+            // Fail only on errors failOnWarning: false, failOnError: true,
+            // Disable/enable autofix
+            fix: false,
+            // Output to Jenkins compatible XML
+            outputReport: {
+              filePath: 'checkstyle.xml',
+              formatter: require('eslint/lib/formatters/checkstyle'),
+            },
+          },
+        },
+      }),
     ],
   };
   return Object.assign(
